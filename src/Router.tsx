@@ -1,29 +1,53 @@
+import ProtectedRoutes from 'components/protectedRoutes/protectedRoutes.component';
+import Error from 'pages/Error/Error.page';
+import HomePage from 'pages/Home/Home.page';
+import Login from 'pages/Login/Login.page';
+import NewNote from 'pages/NewNote/NewNote.page';
+import SignUp from 'pages/SignUp/SignUp.page';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { HomePage } from './pages/Home.page';
-import { NewNote } from './pages/NewNote';
 
 const router = createBrowserRouter([
   {
-    path: '/',
-    element: <HomePage />,
-  },
-  {
-    path: '/new',
-    element: <NewNote />,
-  },
-  {
-    path: '/:id',
+    element: <ProtectedRoutes />,
     children: [
       {
-        index: true,
-        element: <h1>Show</h1>,
+        path: '/',
+        element: <HomePage />,
+        errorElement: <Error />,
       },
       {
-        path: 'edit',
-        element: <h1>Edit</h1>,
-      }
+        path: '/new',
+        element: <NewNote />,
+        errorElement: <Error />,
+      },
+      {
+        path: '/:id',
+        children: [
+          {
+            index: true,
+            element: <h1>Show</h1>,
+            errorElement: <Error />,
+          },
+          {
+            path: 'edit',
+            element: <h1>Edit</h1>,
+            errorElement: <Error />,
+          },
+        ],
+      },
     ],
   },
+  {
+    path: '/login',
+    element: <Login />,
+    errorElement: <Error />,
+  },
+  {
+    path: '/signup',
+    element: <SignUp />,
+    errorElement: <Error />,
+  },
+  
 ]);
 
 export function Router() {
