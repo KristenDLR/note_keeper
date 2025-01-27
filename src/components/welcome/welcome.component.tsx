@@ -2,7 +2,7 @@ import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { FcGoogle } from 'react-icons/fc';
 import { ActionIcon, Group, Stack, Text, TextInput, Title } from '@mantine/core';
 import { auth } from '../../firebase/firebase.config';
-import classes from './Welcome.module.css';
+import classes from './welcome.module.css';
 
 export function Welcome() {
 
