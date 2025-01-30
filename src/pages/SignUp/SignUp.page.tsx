@@ -3,7 +3,7 @@ import { logo } from 'assets';
 import { useUserAuth } from 'context/userAuthContext';
 import { CiAt } from 'react-icons/ci';
 import { FcGoogle } from 'react-icons/fc';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { UserSignIn } from 'types';
 import {
   ActionIcon,
@@ -20,12 +20,13 @@ import {
 } from '@mantine/core';
 import classes from './SignUp.module.css';
 
+interface ISignUpProps {}
+
 const initialValues: UserSignIn = {
   email: '',
   password: '',
   confirmPassword: '',
 };
-interface ISignUpProps {}
 
 const SignUp: React.FunctionComponent<ISignUpProps> = () => {
   const [userInfo, setUserInfo] = useState<UserSignIn>(initialValues);
@@ -37,20 +38,19 @@ const SignUp: React.FunctionComponent<ISignUpProps> = () => {
     try {
       await googleSignIn();
       navigate('/');
-    } catch(error) {
+    } catch (error) {
       console.log('Error: ', error);
     }
   };
 
   const handleSubmit = async (event: React.MouseEvent<HTMLFormElement>) => {
-    //no refresh
     event.preventDefault;
     try {
       console.log('The user info is: ', userInfo);
       await signUp(userInfo.email, userInfo.password);
       navigate('/');
     } catch (error) {
-      console.error('Error: ', error);
+      console.log('Error: ', error);
     }
   };
 
@@ -83,7 +83,9 @@ const SignUp: React.FunctionComponent<ISignUpProps> = () => {
                 <FcGoogle />
                 <Text p="10px">Log in with Google</Text>
               </ActionIcon>
-              <Text>Have an account Sign In</Text>
+              <Text>
+                Don't have an account? <Link to="/login">Log In</Link>
+              </Text>
             </Group>
             <div className={classes.or}>or</div>
             <Stack>
