@@ -64,7 +64,7 @@ export function Router() {
     },
     {
       path: '/',
-      element: <HomePage />,
+      element: <HomePage availableTags={tags} notes={notesWithTags}/>,
       errorElement: <Error />,
     },
     {
