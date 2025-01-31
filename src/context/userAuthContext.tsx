@@ -4,7 +4,7 @@ import {
   GoogleAuthProvider,
   onAuthStateChanged,
   signInWithEmailAndPassword,
-  signInWithRedirect,
+  signInWithPopup,
   signOut,
   User,
 } from 'firebase/auth';
@@ -37,7 +37,7 @@ const logOut = () => {
 
 const googleSignIn = () => {
   const googleAuthProvider = new GoogleAuthProvider();
-  return signInWithRedirect(auth, googleAuthProvider);
+  return signInWithPopup(auth, googleAuthProvider);
 };
 
 //Created a context.API, and provide the initial value
