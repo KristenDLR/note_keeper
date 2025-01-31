@@ -33,3 +33,9 @@ export type Note = {
     id: string
     label: string
   }
+
+  export type CardNote = {
+    tags: Tag[];
+    title: string;
+    id: string;
+  };
