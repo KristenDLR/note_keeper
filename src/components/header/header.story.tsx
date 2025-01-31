@@ -1,4 +1,4 @@
-import { Welcome } from './welcome.component';
+import { Welcome } from './header.component';
 
 export default {
   title: 'Welcome',

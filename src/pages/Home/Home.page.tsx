@@ -1,12 +1,14 @@
+import { NoteList } from 'components/noteList/noteList';
 import { ColorSchemeToggle } from '../../components/colorSchemeToggle/colorSchemeToggle.component';
-import { Welcome } from '../../components/welcome/welcome.component';
+import { Header } from '../../components/header/header.component';
 
 interface IHomePageProps {}
 
 const HomePage: React.FunctionComponent<IHomePageProps> = () => {
   return (
     <>
-      <Welcome />
+      <Header />
+      <NoteList />
       <ColorSchemeToggle />
     </>
   );
