@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import ReactSelect from 'react-select';
 import { CardNote, Tag } from 'types';
 import { Box, Button, Container, Flex, Grid, Group, Text, TextInput, Title } from '@mantine/core';
-import { NoteCard } from 'components/noteCard/noteCard';
+import { NoteCard } from 'components/noteCard/noteCard.component';
 
 export interface INoteList {
   availableTags: Tag[];

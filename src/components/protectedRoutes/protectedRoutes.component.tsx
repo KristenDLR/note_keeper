@@ -1,14 +1,32 @@
+import { Navigate, Outlet, useLocation, useOutletContext, useParams } from "react-router-dom";
 import { useUserAuth } from "context/userAuthContext";
-import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { Note } from "types";
 
-interface IProtectedRoutesProps {}
+export interface IProtectedRoutesProps {
+  notes?: Note[];
+}
 
-const ProtectedRoutes: React.FunctionComponent<IProtectedRoutesProps> = (props) => {
-  const { user } = useUserAuth()
-  const location = useLocation()
-  //if isAuth is false naviaget user back to login
-  //useLocation hook will track state, which page did the user redirect to the login?
-  return user ? (<Outlet />) : (<Navigate to='/login' state ={{ from: location}} />);
+export const ProtectedRoutes: React.FunctionComponent<IProtectedRoutesProps> = ({ notes }) => {
+  const { user } = useUserAuth();
+  const location = useLocation();
+  const { id } = useParams();
+  const note = notes?.find(n => n.id === id);
+
+  console.log('user', user);
+  //If the user is not authenticated, they are redirected to /login and their intended location is stored in the state
+  if (!user) {
+    return <Navigate to="/login" state={{ from: location }} />;
+  }
+
+  // //If the user is authenticated but the note does not exist, they are redirected to /.
+  // if (id && !note) {
+  //   return <Navigate to="/" replace />;
+  // }
+
+  //If both conditions pass, the component renders the Outlet, passing the note via context.
+  return <Outlet context={note} />;
 };
 
-export default ProtectedRoutes;
+export function useNote() {
+  return useOutletContext<Note>();
+};

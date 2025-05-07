@@ -1,4 +1,4 @@
-import { NoteList } from 'components/noteList/noteList';
+import { NoteList } from 'components/noteList/noteList.component';
 import { Note, Tag } from 'types';
 import { Header } from '../../components/header/header.component';
 

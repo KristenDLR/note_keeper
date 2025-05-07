@@ -1,4 +1,4 @@
-import ProtectedRoutes from 'components/protectedRoutes/protectedRoutes.component';
+import { useMemo } from 'react';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 import Error from 'pages/Error/Error.page';
 import HomePage from 'pages/Home/Home.page';
@@ -6,28 +6,28 @@ import Login from 'pages/Login/Login.page';
 import NewNote from 'pages/NewNote/NewNote.page';
 import Profile from 'pages/Profile/Profile.page';
 import SignUp from 'pages/SignUp/SignUp.page';
-import { useMemo } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { NoteData, RawNote, Tag } from 'types';
 import { v4 as uuidV4 } from 'uuid';
+import { ProtectedRoutes } from 'components/protectedRoutes/protectedRoutes.component';
 
 export function Router() {
   const [notes, setNotes] = useLocalStorage<RawNote[]>('NOTES', []);
   const [tags, setTags] = useLocalStorage<Tag[]>('TAGS', []);
 
- const notesWithTags = useMemo(() => {
+  const notesWithTags = useMemo(() => {
     return notes.map((note) => {
       return { ...note, tags: tags.filter((tag) => note.tagIds.includes(tag.id)) };
     });
   }, [notes, tags]);
 
- function onCreateNote({ tags, ...data }: NoteData) {
+  function onCreateNote({ tags, ...data }: NoteData) {
     setNotes((prevNotes) => {
       return [...prevNotes, { ...data, id: uuidV4(), tagIds: tags.map((tag) => tag.id) }];
     });
   }
 
- function addTag(tag: Tag) {
+  function addTag(tag: Tag) {
     setTags((prev) => [...prev, tag]);
   }
 
@@ -47,6 +47,7 @@ export function Router() {
         },
         {
           path: '/:id',
+          element: <ProtectedRoutes notes={notesWithTags} />,
           children: [
             {
               index: true,
@@ -64,7 +65,7 @@ export function Router() {
     },
     {
       path: '/',
-      element: <HomePage availableTags={tags} notes={notesWithTags}/>,
+      element: <HomePage availableTags={tags} notes={notesWithTags} />,
       errorElement: <Error />,
     },
     {
