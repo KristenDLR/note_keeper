@@ -1,9 +1,3 @@
-import { useState } from 'react';
-import { logo } from 'assets';
-import { useUserAuth } from 'context/userAuthContext';
-import { CiAt } from 'react-icons/ci';
-import { FcGoogle } from 'react-icons/fc';
-import { UserLogIn } from 'types';
 import {
   ActionIcon,
   Box,
@@ -14,47 +8,78 @@ import {
   Stack,
   Text,
   TextInput,
-  Title,
+  Title
 } from '@mantine/core';
-import classes from './Login.module.css';
+import { logo } from 'assets';
+import { useUserAuth } from 'context/userAuthContext';
+import { useState } from 'react';
+import { CiAt } from 'react-icons/ci';
+import { FcGoogle } from 'react-icons/fc';
 import { Link, useNavigate } from 'react-router-dom';
+import { supabase } from 'supabase/client';
+import { UserLogIn } from 'types';
+import classes from './Login.module.css';
 
-interface ILoginProps {}
+interface ILoginProps { }
 
 const initialValues: UserLogIn = {
   email: '',
   password: '',
+  loading: false,
+  error: '',
 };
 
 const Login: React.FunctionComponent<ILoginProps> = () => {
   const [userLoginInfo, setUserLoginInfo] = useState<UserLogIn>(initialValues);
-  const { googleSignIn, logIn } = useUserAuth();
+  const { session, login } = useUserAuth();
   const navigate = useNavigate();
 
-  const handleGoogleSignIn = async (event: React.MouseEvent<HTMLElement>) => {
-    event.preventDefault;
-    try {
-      await googleSignIn();
-      navigate('/new');
-    } catch (error) {
-      console.log('Error: ', error);
-    }
+  console.log('session', session)
+
+
+  const handleGoogleSignUp = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`, // or your site's URL
+      },
+    });
+
+    if (error) console.error('Google Sign-In Error:', error);
+    console.log("google login")
   };
 
-
-  const handleSubmit = async (event: React.MouseEvent<HTMLFormElement>) => {
-    event.preventDefault;
+  const handleLogin = async (event: React.MouseEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setUserLoginInfo({ ...userLoginInfo, loading: true })
     try {
       console.log('The user info is: ', userLoginInfo);
-      await logIn(userLoginInfo.email, userLoginInfo.password);
-      navigate('/');
+      const result = await login(userLoginInfo.email, userLoginInfo.password);
+      if (result.success) {
+        navigate('/profile');
+      }
     } catch (error) {
+      setUserLoginInfo({ ...userLoginInfo, error: "An error occured when signing up" })
       console.log('Error: ', error);
+    } finally {
+      setUserLoginInfo({ ...userLoginInfo, loading: false });
     }
   };
 
+  // const handleLogin = async (event: React.MouseEvent<HTMLFormElement>) => {
+  //   event.preventDefault;
+  //   try {
+  //     console.log('The user info is: ', userLoginInfo);
+  //     await login(userLoginInfo.email, userLoginInfo.password);
+  //     // navigate('/');
+  //   } catch (error) {
+  //     console.log('Error: ', error);
+  //   }
+  // };
+
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleLogin}>
+
       <Grid>
         <Grid.Col span={6} className={classes.leftContainer}>
           <Stack>
@@ -72,12 +97,13 @@ const Login: React.FunctionComponent<ILoginProps> = () => {
             </Box>
             <Box>
               <ActionIcon
+                w={'200px'}
                 className={classes.googleBtn}
                 variant="outline"
                 radius="xl"
-                onClick={handleGoogleSignIn}
+                onClick={handleGoogleSignUp}
                 aria-label="Sign in with Google"
-                //   gradient={{ from: 'cyan', to: 'blue', deg: 90 }}
+              //   gradient={{ from: 'cyan', to: 'blue', deg: 90 }}
               >
                 <FcGoogle />
                 <Text p="10px">Log in with Google</Text>

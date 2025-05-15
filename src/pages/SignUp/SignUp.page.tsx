@@ -1,61 +1,69 @@
-import { useState } from 'react';
-import { logo } from 'assets';
-import { useUserAuth } from 'context/userAuthContext';
-import { CiAt } from 'react-icons/ci';
-import { FcGoogle } from 'react-icons/fc';
-import { Link, useNavigate } from 'react-router-dom';
-import { UserSignIn } from 'types';
 import {
   ActionIcon,
   Box,
   Button,
   Container,
   Grid,
-  Group,
   Image,
   Stack,
   Text,
   TextInput,
-  Title,
+  Title
 } from '@mantine/core';
+import { logo } from 'assets';
+import { useUserAuth } from 'context/userAuthContext';
+import { useState } from 'react';
+import { CiAt } from 'react-icons/ci';
+import { FcGoogle } from 'react-icons/fc';
+import { Link, useNavigate } from 'react-router-dom';
+import { supabase } from 'supabase/client';
+import { UserSignIn } from 'types';
 import classes from './SignUp.module.css';
 
-interface ISignUpProps {}
+interface ISignUpProps { }
 
 const initialValues: UserSignIn = {
   email: '',
   password: '',
   confirmPassword: '',
+  loading: false,
+  error: '',
 };
 
 const SignUp: React.FunctionComponent<ISignUpProps> = () => {
   const [userInfo, setUserInfo] = useState<UserSignIn>(initialValues);
-  const { googleSignIn, signUp } = useUserAuth();
+  const { session, signUp } = useUserAuth();
   const navigate = useNavigate();
 
-  const handleGoogleSignIn = async (event: React.MouseEvent<HTMLElement>) => {
-    event.preventDefault;
-    try {
-      await googleSignIn();
-      navigate('/');
-    } catch (error) {
-      console.log('Error: ', error);
-    }
-  };
+  console.log('session', session)
 
-  const handleSubmit = async (event: React.MouseEvent<HTMLFormElement>) => {
-    event.preventDefault;
+  const handleGoogleSignUp = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+    });
+    if (error) console.error('Google Sign-In Error:', error);
+  };
+  
+
+  const handleSignIn = async (event: React.MouseEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setUserInfo({ ...userInfo, loading: true})
     try {
       console.log('The user info is: ', userInfo);
-      await signUp(userInfo.email, userInfo.password);
-      navigate('/');
+      const result = await signUp(userInfo.email, userInfo.password);
+      if(result.success){
+        navigate('/profile');
+      }
     } catch (error) {
+      setUserInfo({ ...userInfo, error: "An error occured when signing up" })
       console.log('Error: ', error);
+    }finally {
+      setUserInfo({ ...userInfo, loading: false});
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSignIn}>
       <Grid>
         <Grid.Col span={6} className={classes.leftContainer}>
           <Stack>
@@ -71,22 +79,22 @@ const SignUp: React.FunctionComponent<ISignUpProps> = () => {
                 Tag It, Keep It, Love It – Your Notes, Your Way!
               </Text>
             </Box>
-            <Group>
+
+            <Box>
               <ActionIcon
+                w={'200px'}
                 className={classes.googleBtn}
                 variant="outline"
                 radius="xl"
-                onClick={handleGoogleSignIn}
+                onClick={handleGoogleSignUp}
                 aria-label="Sign in with Google"
-                //   gradient={{ from: 'cyan', to: 'blue', deg: 90 }}
+              //   gradient={{ from: 'cyan', to: 'blue', deg: 90 }}
               >
                 <FcGoogle />
                 <Text p="10px">Log in with Google</Text>
               </ActionIcon>
-              <Text>
-                Don't have an account? <Link to="/login">Log In</Link>
-              </Text>
-            </Group>
+            </Box>
+
             <div className={classes.or}>or</div>
             <Stack>
               <TextInput
@@ -130,6 +138,8 @@ const SignUp: React.FunctionComponent<ISignUpProps> = () => {
               <Button type="submit" radius="xl" variant="filled">
                 Sign Up
               </Button>
+              {userInfo.error && <p color='red'>{userInfo.error}</p> }
+              <Text>Already have an account? <Link to='/login'>Login</Link></Text>
             </Stack>
           </Stack>
         </Grid.Col>
