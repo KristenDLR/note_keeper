@@ -2,11 +2,15 @@ export interface UserSignIn {
     email: string;
     password: string;
     confirmPassword: string;
+    loading: boolean;
+    error: string;
 }
 
 export interface UserLogIn {
     email: string;
     password: string;
+    loading: boolean;
+    error: string;
 }
 
 export type Note = {
