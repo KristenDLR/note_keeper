@@ -8,8 +8,8 @@ import { router } from 'Router';
 import { theme } from './theme';
 
 
-//User AuthProvider intitalizes Supabase session login and exposes it via React Context
-// RouterProvider renders you app based on router.tsx config
+// User AuthProvider intitalizes Supabase session login and exposes it via React Context
+// RouterProvider renders app based on Router.tsx
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <MantineProvider theme={theme}>
@@ -17,8 +17,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <UserAuthProvider> 
             {/* enables route handling */}
             <RouterProvider router={router} />
-            {/* <App /> */}
         </UserAuthProvider>
-
     </MantineProvider >
 );
