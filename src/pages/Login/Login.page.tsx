@@ -66,17 +66,6 @@ const Login: React.FunctionComponent<ILoginProps> = () => {
     }
   };
 
-  // const handleLogin = async (event: React.MouseEvent<HTMLFormElement>) => {
-  //   event.preventDefault;
-  //   try {
-  //     console.log('The user info is: ', userLoginInfo);
-  //     await login(userLoginInfo.email, userLoginInfo.password);
-  //     // navigate('/');
-  //   } catch (error) {
-  //     console.log('Error: ', error);
-  //   }
-  // };
-
   return (
     <form onSubmit={handleLogin}>
 
